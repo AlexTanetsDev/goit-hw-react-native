@@ -30,6 +30,7 @@ export const LoginScreen = () => {
       };
     
 
+
     return (
         
         <TouchableWithoutFeedback onPress={keyboardHide} >
@@ -48,8 +49,10 @@ export const LoginScreen = () => {
                                 placeholder={"Адрес электронной почты"}
                                 onChangeText={handleEmailImputChange}
                                 value={loginFormValue.email}
-                                onFocus={() => setIsShowKeyboard(true)}
-                                onSubmitEditing={() => setIsShowKeyboard(false)} />
+                            onFocus={() => {
+                                setIsShowKeyboard(true)
+                            }}
+                                onSubmitEditing={() => setIsShowKeyboard(false)}  />
        
                             <TextInput style={{ ...styles.input, marginBottom: 43 }}
                                 secureTextEntry={true}
@@ -79,11 +82,11 @@ export const LoginScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  backgroundImg: {
-    flex: 1,   
-    justifyContent: 'flex-end',
-    resizeMode: 'cover'
-  },
+    backgroundImg: {
+        flex: 1,
+        justifyContent: 'flex-end',
+        resizeMode: 'cover'
+    },
 
     registrationFormBox: {
         borderTopLeftRadius: 25,
@@ -112,6 +115,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#F6F6F6',
         padding: 16,
         marginBottom: 16,
+        borderEndWidth: 1,
+       borderColor: "#FF6C00"
+       
 
     },
 
@@ -121,6 +127,7 @@ const styles = StyleSheet.create({
         borderRadius: 100,
         justifyContent: "center",
         alignItems: "center",
+       
     
     },
     btnTitle: {
