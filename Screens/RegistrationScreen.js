@@ -1,44 +1,138 @@
-import { StyleSheet, View, Text, TouchableOpacity, TextInput } from "react-native"
+import {     StyleSheet,
+    View,
+    Text,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    TextInput,
+    KeyboardAvoidingView,
+    Platform,
+    Keyboard,
+    ImageBackground } from "react-native"
+import { useState } from "react";
 
+const defaultValues = { login: '', email: '', password: '' };
 
 export const RegistrationScreen = () => {
+     const [loginFormValue, setLoginFormValue] = useState(defaultValues);
+    const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+
+    const [isLoginInputOnFocus, setIsLoginInputOnFocus] = useState(false);
+    const [isPassImputOnFocus, setIsPassImputOnFocus] = useState(false);
+    const [isEmailImputOnFocus, setIsEmailImputOnFocus] = useState(false);
+
+    const handleEmailImputChange = (value) => {
+        setLoginFormValue((prevstate) => { return { ...prevstate, email: value } });
+    }; 
+
+    const handlePasswordChange = (value) => {
+         setLoginFormValue((prevstate) => { return { ...prevstate, password: value } });
+    };
+
+    const handleLoginChange = (value) => {
+        setLoginFormValue((prevstate) => { return { ...prevstate, login: value } });
+    }
+
+      const keyboardHide = () => {
+    setIsShowKeyboard(false);
+    Keyboard.dismiss();
+      };
+    
+    const handleSubmit = () => {
+        console.log(loginFormValue);
+        setLoginFormValue(defaultValues)
+}
     
     return (
-        <View style={styles.registrationFormBox}>
+        <TouchableWithoutFeedback onPress={keyboardHide} >
+        
+               
+         
 
-            <Text style={styles.formTitle} >
-                Регистрация
-            </Text>
-            <View style={styles.form}>
-                <TextInput style={styles.input} placeholder={'Логин'} />
-                <TextInput style={styles.input} keyboardType={'email-address'} placeholder={"Адрес электронной почты"} />
-                <TextInput style={{ ...styles.input, marginBottom: 43 }} secureTextEntry={true} placeholder={'Пароль'} />
-                <TouchableOpacity activeOpacity={0.8} style={styles.btn}>
-                    <Text style={styles.btnTitle}>Зарегистрироваться</Text>
-                </TouchableOpacity>
-            </View>
-          
-            <Text style={styles.navLink}>
-                Уже есть аккаунт? Войти
-            </Text>
+            <View style={styles.wrapper}>
+                 <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"}>
+                 <View style={styles.registrationFormBox}>
 
-        </View>
+                    <Text style={styles.formTitle} >
+                        Войти
+                    </Text>
+                    <View style={styles.form}>
+                        
+                        <TextInput style={(isLoginInputOnFocus ? styles.inputOnFocus : styles.input)}
+                        
+                            placeholder={"Логин"}
+                            onChangeText={handleLoginChange}
+                            value={loginFormValue.login}
+                            onFocus={() => {
+                                setIsShowKeyboard(true);
+                                setIsLoginInputOnFocus(true);
+                            }}
+                            onSubmitEditing={() => setIsShowKeyboard(false)}
+                            onBlur={() => setIsLoginInputOnFocus(false)} />
+                
+                        <TextInput style={(isEmailImputOnFocus ? styles.inputOnFocus : styles.input)}
+                            keyboardType={'email-address'}
+                            placeholder={"Адрес электронной почты"}
+                            onChangeText={handleEmailImputChange}
+                            value={loginFormValue.email}
+                            onFocus={() => {
+                                setIsShowKeyboard(true);
+                                setIsEmailImputOnFocus(true);
+                            }}
+                            onSubmitEditing={() => setIsShowKeyboard(false)}
+                            onBlur={() => setIsEmailImputOnFocus(false)} />
+       
+                        <TextInput style={(isPassImputOnFocus ? styles.inputOnFocus : styles.input)}
+                            secureTextEntry={true}
+                            placeholder={'Пароль'}
+                            onChangeText={handlePasswordChange}
+                            value={loginFormValue.password}
+                            onFocus={() => {
+                                setIsShowKeyboard(true);
+                                setIsPassImputOnFocus(true)
+                            }}
+                            onSubmitEditing={() => setIsShowKeyboard(false)}
+                            onBlur={() => setIsPassImputOnFocus(false)} />
+                
+                        {!isShowKeyboard && <TouchableOpacity activeOpacity={0.8} style={styles.btn} onPress={handleSubmit}>
+                            <Text style={styles.btnTitle}>Войти</Text>
+                        </TouchableOpacity>}
+                    </View>
+        
+                    {!isShowKeyboard && <Text style={styles.navLink}>
+                        Нет аккаунта? Зарегистрироваться
+                    </Text>}
+
+                    </View>
+                     </KeyboardAvoidingView>
+         </View>
+               
+        
+               
+       
+        </TouchableWithoutFeedback>
     );
 };
 
+
 const styles = StyleSheet.create({
+    wrapper: {
+        flex: 1,
+        justifyContent: 'flex-end',
+       
+    },
+
     registrationFormBox: {
         borderTopLeftRadius: 25,
         borderTopRightRadius: 25,
         backgroundColor: "#FFFFFF",
-    
+    paddingBottom: 17,
   
     },
 
     formTitle: {
         // fontFamily: ''
         fontSize: 30,
-        marginTop: 92,
+        marginTop: 32,
         marginBottom: 33,
         textAlign: 'center',
    
@@ -57,12 +151,30 @@ const styles = StyleSheet.create({
 
     },
 
+    inputOnFocus: {
+        height: 50,
+        borderRadius: 8,
+        padding: 16,
+        marginBottom: 16,
+
+        borderBottomWidth: 1,
+        borderLeftWidth: 1,
+        borderRightWidth: 1,
+        borderTopWidth: 1,
+        borderLeftColor: "#FF6C00",
+        borderRightColor: "#FF6C00",
+        borderTopColor: "#FF6C00",
+        borderBottomColor: "#FF6C00",
+        backgroundColor: '#fff'
+    },
+
     btn: {
         backgroundColor: "#FF6C00",
         height: 50,
         borderRadius: 100,
         justifyContent: "center",
         alignItems: "center",
+       marginTop: 27,
     
     },
     btnTitle: {
@@ -73,7 +185,7 @@ const styles = StyleSheet.create({
     navLink: {
         textAlign: 'center',
         marginTop: 16,
-        marginBottom: 65,
+        marginBottom: 45,
     },
 
 });
