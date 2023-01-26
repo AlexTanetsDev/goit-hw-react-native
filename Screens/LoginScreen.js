@@ -8,23 +8,62 @@ import {
     KeyboardAvoidingView,
     Platform,
     Keyboard,
-    ImageBackground
 } from "react-native";
-import { useState } from "react";
-const defaultValues = { email: '', password: '' };
+import { useState, useEffect, useCallback } from "react";
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+
+SplashScreen.preventAutoHideAsync();
 
 export const LoginScreen = () => {
-    const [loginFormValue, setLoginFormValue] = useState(defaultValues);
+
+    const [password, setPassword] = useState("");
+    const [email, setEmail] = useState("");
     const [isShowKeyboard, setIsShowKeyboard] = useState(false);
     const [isLoginInputOnFocus, setIsLoginInputOnFocus] = useState(false);
     const [isPassImputOnFocus, setIsPassImputOnFocus] = useState(false)
 
+    const [showPassword, setShowPassword] = useState(false);
+    const [isValidEmail, setIsValidEmail] = useState(true);
+     const [isValidPassvord, setIsValidPassvord] = useState(true);
+    
+    const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+    useEffect(() => {
+        if (mailformat.test(email)) {
+            setIsValidEmail(true);
+        };
+    }, [email]);
+
+   useEffect(() => {
+        if (password !== '') {
+            setIsValidPassvord(true);
+        } 
+   }, [password]);
+    
+          const [fontsLoaded] = useFonts({
+      'Roboto-Regular': require('../assets/fonts/Roboto-Regular.ttf'),
+      'Roboto-Medium': require('../assets/fonts/Roboto-Medium.ttf'),
+      'Roboto-Bold': require('../assets/fonts/Roboto-Bold.ttf')
+  });
+    
+      const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
+    
+    
     const handleEmailImputChange = (value) => {
-        setLoginFormValue((prevstate) => { return { ...prevstate, email: value } });
+        setEmail(value);
     }; 
 
     const handlePasswordChange = (value) => {
-         setLoginFormValue((prevstate) => { return { ...prevstate, password: value } });
+        setPassword(value);
     };
 
       const keyboardHide = () => {
@@ -33,59 +72,102 @@ export const LoginScreen = () => {
       };
     
     const handleSubmit = () => {
-        console.log(loginFormValue);
-        setLoginFormValue(defaultValues)
-}
+if (email === '' || password === '' || !isValidEmail) {
+            alert("Заполните все поля или проверьте правильность ввода!");
+            return;
+            
+        };
+
+        console.log({ email: email, password: password });
+        setEmail('');
+        setPassword('');
+    };
+
+    const togglePasswordShow = () => setShowPassword(!showPassword);
+
+    const validationEmail = () => {
+         if (!mailformat.test(email)) {
+            setIsValidEmail(false);
+        };
+    };
+
+       const validationPassword = () => {
+        if (password === '') {
+            setIsValidPassvord(false);
+        }
+    };
+  
 
     return (
         
-        <TouchableWithoutFeedback onPress={keyboardHide} >
+        <TouchableWithoutFeedback onPress={keyboardHide} onLayout={onLayoutRootView} >
           
          
             <View style={styles.wrapper}>
-                   <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"}>
-                <View style={styles.registrationFormBox}>
+                <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : ""}>
+                    <View style={styles.registrationFormBox}>
 
-                    <Text style={styles.formTitle} >
-                        Войти
-                    </Text>
-                    <View style={styles.form}>
-                
-                        <TextInput style={(isLoginInputOnFocus ? styles.inputOnFocus : styles.input)}
-                            keyboardType={'email-address'}
-                            placeholder={"Адрес электронной почты"}
-                            onChangeText={handleEmailImputChange}
-                            value={loginFormValue.email}
-                            onFocus={() => {
-                                setIsShowKeyboard(true);
-                                setIsLoginInputOnFocus(true);
-                            }}
-                            onSubmitEditing={() => setIsShowKeyboard(false)}
-                            onBlur={() => setIsLoginInputOnFocus(false)} />
+                        <Text style={{...styles.formTitle, fontFamily: 'Roboto-Medium'}} >
+                            Войти
+                        </Text>
+                        <View style={styles.form}>
+                            <View>
+                                {!isValidEmail && <Text style={styles.inValidValue}>Некорректное значение</Text>}
+                                <TextInput style={(isLoginInputOnFocus ? styles.inputOnFocus : styles.input)}
+                                    keyboardType={'email-address'}
+                                    placeholder={"Адрес электронной почты"}
+                                    onChangeText={handleEmailImputChange}
+                                    value={email}
+                                    onFocus={() => {
+                                        setIsShowKeyboard(true);
+                                        setIsLoginInputOnFocus(true);
+                                    }}
+                                    onSubmitEditing={() => setIsShowKeyboard(false)}
+                                    onBlur={() => {
+                                        setIsLoginInputOnFocus(false);
+                                        validationEmail();
+                                    }}
+                                    placeholderTextColor={'#BDBDBD'} />
+                            
+                            </View>
+                       
+                        
+                            <View>
+                                {!isValidPassvord && <Text style={styles.inValidValue}>Это обязательное поле</Text>}
+                                <View style={{ position: "relative" }}>
+                                    <Text style={styles.passwordShowText} onPress={togglePasswordShow}>{!showPassword ? 'Показать' : 'Скрыть'}</Text>
+                                    <TextInput style={(isPassImputOnFocus ? styles.inputOnFocus : styles.input)}
+                                        secureTextEntry={!showPassword}
+                                        placeholder={'Пароль'}
+                                        onChangeText={handlePasswordChange}
+                                        value={password}
+                                        onFocus={() => {
+                                            setIsShowKeyboard(true);
+                                            setIsPassImputOnFocus(true)
+                                        }}
+                                        onSubmitEditing={() => setIsShowKeyboard(false)}
+                                        onBlur={() => {
+                                            setIsPassImputOnFocus(false);
+                                            validationPassword();
+                                        }
+                                        }
+                                        placeholderTextColor={'#BDBDBD'} />
+                                </View>
+                           
+                            </View>
        
-                        <TextInput style={(isPassImputOnFocus ? styles.inputOnFocus : styles.input)}
-                            secureTextEntry={true}
-                            placeholder={'Пароль'}
-                            onChangeText={handlePasswordChange}
-                            value={loginFormValue.password}
-                            onFocus={() => {
-                                setIsShowKeyboard(true);
-                                setIsPassImputOnFocus(true)
-                            }}
-                            onSubmitEditing={() => setIsShowKeyboard(false)}
-                            onBlur={() => setIsPassImputOnFocus(false)} />
                 
-                        {!isShowKeyboard && <TouchableOpacity activeOpacity={0.8} style={styles.btn} onPress={handleSubmit}>
-                            <Text style={styles.btnTitle}>Войти</Text>
-                        </TouchableOpacity>}
-                    </View>
+                            {!isShowKeyboard && <TouchableOpacity activeOpacity={0.8} style={styles.btn} onPress={handleSubmit}>
+                                <Text style={styles.btnTitle}>Войти</Text>
+                            </TouchableOpacity>}
+                        </View>
         
-                    {!isShowKeyboard && <Text style={styles.navLink}>
-                        Нет аккаунта? Зарегистрироваться
-                    </Text>}
+                        {!isShowKeyboard && <Text style={styles.navLink}>
+                            Нет аккаунта? Зарегистрироваться
+                        </Text>}
 
-                </View>
-                  </KeyboardAvoidingView>
+                    </View>
+                </KeyboardAvoidingView>
             </View>
                   
         
@@ -97,7 +179,7 @@ export const LoginScreen = () => {
 };
 
 const styles = StyleSheet.create({
-   wrapper: {
+    wrapper: {
         flex: 1,
         justifyContent: 'flex-end',
        
@@ -107,7 +189,7 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 25,
         borderTopRightRadius: 25,
         backgroundColor: "#FFFFFF",
-    paddingBottom: 17,
+        paddingBottom: 17,
   
     },
 
@@ -127,6 +209,11 @@ const styles = StyleSheet.create({
     input: {
         height: 50,
         borderRadius: 8,
+        borderLeftWidth: 1,
+        borderRightWidth: 1,
+        borderTopWidth: 1,
+        borderBottomWidth: 1,
+        borderColor: '#E8E8E8',
         backgroundColor: '#F6F6F6',
         padding: 16,
         marginBottom: 16,
@@ -150,13 +237,30 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff'
     },
 
+    inValidValue: {
+        paddingLeft: 15,
+        marginBottom: 5,
+        color: "red", 
+      fontSize: 16,
+    },
+    
+     passwordShowText: {
+        position: 'absolute',
+        zIndex: 111,
+        right: 16,
+        top: 16,
+        
+         color: '#1B4371',
+    },
+
+
     btn: {
         backgroundColor: "#FF6C00",
         height: 50,
         borderRadius: 100,
         justifyContent: "center",
         alignItems: "center",
-       marginTop: 27,
+        marginTop: 27,
     
     },
     btnTitle: {
@@ -168,6 +272,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginTop: 16,
         marginBottom: 45,
+        color: '#1B4371',
     },
 
 });
