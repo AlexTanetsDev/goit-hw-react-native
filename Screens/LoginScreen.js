@@ -8,12 +8,13 @@ import {
     KeyboardAvoidingView,
     Platform,
     Keyboard,
+    ImageBackground,
+    Dimensions
 } from "react-native";
-import { useState, useEffect, useCallback } from "react";
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
+import { useState, useEffect } from "react";
 
-SplashScreen.preventAutoHideAsync();
+
+
 
 export const LoginScreen = () => {
 
@@ -25,7 +26,9 @@ export const LoginScreen = () => {
 
     const [showPassword, setShowPassword] = useState(false);
     const [isValidEmail, setIsValidEmail] = useState(true);
-     const [isValidPassvord, setIsValidPassvord] = useState(true);
+    const [isValidPassvord, setIsValidPassvord] = useState(true);
+    
+     const [isHorizontal, setIsHorizontal] = useState(Dimensions.get('window').width > 450);
     
     const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
@@ -41,22 +44,17 @@ export const LoginScreen = () => {
         } 
    }, [password]);
     
-          const [fontsLoaded] = useFonts({
-      'Roboto-Regular': require('../assets/fonts/Roboto-Regular.ttf'),
-      'Roboto-Medium': require('../assets/fonts/Roboto-Medium.ttf'),
-      'Roboto-Bold': require('../assets/fonts/Roboto-Bold.ttf')
-  });
-    
-      const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
-    
+       useEffect(() => {
+        const subscription = Dimensions.addEventListener(
+            'change',
+            ({ window }) => {
+              
+                setIsHorizontal(window.width > 450);
+            
+            },
+        );
+        return () => subscription?.remove();
+    });
     
     const handleEmailImputChange = (value) => {
         setEmail(value);
@@ -100,18 +98,18 @@ if (email === '' || password === '' || !isValidEmail) {
 
     return (
         
-        <TouchableWithoutFeedback onPress={keyboardHide} onLayout={onLayoutRootView} >
-          
+        <TouchableWithoutFeedback onPress={keyboardHide}>
+            <ImageBackground source={require('../assets/PhotoBG.jpg')} style={styles.backgroundImg}>
          
             <View style={styles.wrapper}>
                 <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : ""}>
                     <View style={styles.registrationFormBox}>
 
-                        <Text style={{...styles.formTitle, fontFamily: 'Roboto-Medium'}} >
+                        <Text style={styles.formTitle} >
                             Войти
                         </Text>
                         <View style={styles.form}>
-                            <View>
+                            <View style={{marginBottom: 16}}>
                                 {!isValidEmail && <Text style={styles.inValidValue}>Некорректное значение</Text>}
                                 <TextInput style={(isLoginInputOnFocus ? styles.inputOnFocus : styles.input)}
                                     keyboardType={'email-address'}
@@ -132,7 +130,7 @@ if (email === '' || password === '' || !isValidEmail) {
                             </View>
                        
                         
-                            <View>
+                            <View style={{marginBottom: isHorizontal ? 20 : 43}}>
                                 {!isValidPassvord && <Text style={styles.inValidValue}>Это обязательное поле</Text>}
                                 <View style={{ position: "relative" }}>
                                     <Text style={styles.passwordShowText} onPress={togglePasswordShow}>{!showPassword ? 'Показать' : 'Скрыть'}</Text>
@@ -162,7 +160,7 @@ if (email === '' || password === '' || !isValidEmail) {
                             </TouchableOpacity>}
                         </View>
         
-                        {!isShowKeyboard && <Text style={styles.navLink}>
+                            {!isShowKeyboard && <Text style={{ ...styles.navLink, marginBottom: isHorizontal? 20 : 115 }}>
                             Нет аккаунта? Зарегистрироваться
                         </Text>}
 
@@ -171,7 +169,7 @@ if (email === '' || password === '' || !isValidEmail) {
             </View>
                   
         
-          
+          </ImageBackground>
        
         </TouchableWithoutFeedback>
     
@@ -184,17 +182,21 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
        
     },
+          backgroundImg: {
+    flex: 1,
+    resizeMode: 'cover'
+  },
 
     registrationFormBox: {
         borderTopLeftRadius: 25,
         borderTopRightRadius: 25,
         backgroundColor: "#FFFFFF",
-        paddingBottom: 17,
+        paddingBottom: 15,
   
     },
 
     formTitle: {
-        // fontFamily: ''
+        fontFamily: 'Medium',
         fontSize: 30,
         marginTop: 32,
         marginBottom: 33,
@@ -216,7 +218,7 @@ const styles = StyleSheet.create({
         borderColor: '#E8E8E8',
         backgroundColor: '#F6F6F6',
         padding: 16,
-        marginBottom: 16,
+     
 
     },
 
@@ -224,7 +226,7 @@ const styles = StyleSheet.create({
         height: 50,
         borderRadius: 8,
         padding: 16,
-        marginBottom: 16,
+     
 
         borderBottomWidth: 1,
         borderLeftWidth: 1,
@@ -260,7 +262,7 @@ const styles = StyleSheet.create({
         borderRadius: 100,
         justifyContent: "center",
         alignItems: "center",
-        marginTop: 27,
+      
     
     },
     btnTitle: {
@@ -269,9 +271,10 @@ const styles = StyleSheet.create({
     },
   
     navLink: {
+        fontFamily: 'Regular',
         textAlign: 'center',
         marginTop: 16,
-        marginBottom: 45,
+       
         color: '#1B4371',
     },
 

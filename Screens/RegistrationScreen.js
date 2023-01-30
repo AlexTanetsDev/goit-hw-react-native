@@ -8,12 +8,13 @@ import {     StyleSheet,
     Platform,
     Image,
     Keyboard,
+    ImageBackground,
+    Dimensions,
      } from "react-native"
-import { useState, useEffect, useCallback } from "react";
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
+import { useState, useEffect } from "react";
 
-SplashScreen.preventAutoHideAsync();
+
+
 
 
 export const RegistrationScreen = () => {
@@ -32,6 +33,9 @@ export const RegistrationScreen = () => {
     const [isValidEmail, setIsValidEmail] = useState(true);
     const [isValidLogin, setIsValidLogin] = useState(true);
     const [isValidPassvord, setIsValidPassvord] = useState(true);
+
+    const [isHorizontal, setIsHorizontal] = useState(Dimensions.get('window').width > 450);
+  
 
     const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
@@ -54,22 +58,17 @@ export const RegistrationScreen = () => {
     }, [password]);
     
 
-      const [fontsLoaded] = useFonts({
-      'Roboto-Regular': require('../assets/fonts/Roboto-Regular.ttf'),
-      'Roboto-Medium': require('../assets/fonts/Roboto-Medium.ttf'),
-      'Roboto-Bold': require('../assets/fonts/Roboto-Bold.ttf')
-  });
-    
-      const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
-    
+    useEffect(() => {
+        const subscription = Dimensions.addEventListener(
+            'change',
+            ({ window }) => {
+              
+                setIsHorizontal(window.width > 450);
+            
+            },
+        );
+        return () => subscription?.remove();
+    });
 
     const handleEmailImputChange = (value) => {
         setEmail(value);
@@ -120,18 +119,20 @@ export const RegistrationScreen = () => {
         if (login === '') {
             setIsValidLogin(false);
         }
-    }
+    };
+
     
     return (
-        <TouchableWithoutFeedback onPress={keyboardHide} onLayout={onLayoutRootView} >
-        
+       
+        <TouchableWithoutFeedback onPress={keyboardHide} >
+          <ImageBackground source={require('../assets/PhotoBG.jpg')} style={styles.backgroundImg}>
                
          
 
             <View style={styles.wrapper}>
                 <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : ""}>
                 
-                    <View style={styles.registrationFormBox}>
+                        <View style={{ ...styles.registrationFormBox, paddingBottom: isHorizontal ? 30 : 60 }}>
                         <View style={styles.avatarBox}>
                             <View style={styles.addAvatarBtn}>
                                 <Image source={require('../assets/Union.png')} ></Image>
@@ -139,11 +140,11 @@ export const RegistrationScreen = () => {
                         
                         </View>
 
-                        <Text style={{...styles.formTitle, fontFamily: 'Roboto-Medium'}} >
+                        <Text style={styles.formTitle} >
                             Регистрация
                         </Text>
                         <View style={styles.form}>
-                            <View>
+                            <View style={{  marginBottom: 16}}>
                                 {!isValidLogin && <Text style={styles.inValidValue}>Это обязательное поле</Text>}
                                 <TextInput style={(isLoginInputOnFocus ? styles.inputOnFocus : styles.input)}
                         
@@ -163,7 +164,7 @@ export const RegistrationScreen = () => {
                                     } />
                             </View>
                          
-                            <View>
+                            <View style={{  marginBottom: 16}}>
                                 {!isValidEmail && <Text style={styles.inValidValue}>Некорректное значение</Text>}
                                 
                                 <TextInput style={(isEmailImputOnFocus ? styles.inputOnFocus : styles.input)}
@@ -185,7 +186,7 @@ export const RegistrationScreen = () => {
                             </View>
                 
                         
-                            <View >
+                            <View style={{  marginBottom: isHorizontal ? 15 : 43}}>
                                 {!isValidPassvord && <Text style={styles.inValidValue}>Это обязательное поле</Text>}
                                 <View style={{ position: "relative" }}>
                                     <Text style={styles.passwordShowText} onPress={togglePasswordShow}>{!showPassword ? 'Показать' : 'Скрыть'}</Text>
@@ -217,7 +218,7 @@ export const RegistrationScreen = () => {
                         </View>
         
                         {!isShowKeyboard && <Text style={styles.navLink}>
-                            Нет аккаунта? Зарегистрироваться
+                            Уже есть аккаунт? Войти
                         </Text>}
 
                     </View>
@@ -226,8 +227,9 @@ export const RegistrationScreen = () => {
                
         
                
-       
-        </TouchableWithoutFeedback>
+          </ImageBackground>
+            </TouchableWithoutFeedback>
+         
     );
 };
 
@@ -239,6 +241,10 @@ const styles = StyleSheet.create({
        
     },
 
+      backgroundImg: {
+    flex: 1,
+    resizeMode: 'cover'
+  },
    
     registrationFormBox: {
         position: "relative",
@@ -246,7 +252,7 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 25,
         borderTopRightRadius: 25,
         backgroundColor: "#FFFFFF",
-        paddingBottom: 17,
+        paddingBottom: 60,
   
     },
 
@@ -282,6 +288,7 @@ const styles = StyleSheet.create({
     },
 
     formTitle: {
+        fontFamily: 'Medium',
         fontSize: 30,
         marginTop: 92,
         marginBottom: 33,
@@ -290,8 +297,9 @@ const styles = StyleSheet.create({
     },
 
     form: {
-        marginHorizontal: 16,
+        marginHorizontal:16 ,
     },
+
 
     input: {
         height: 50,
@@ -303,7 +311,6 @@ const styles = StyleSheet.create({
         borderColor: '#E8E8E8',
         backgroundColor: '#F6F6F6',
         padding: 16,
-        marginBottom: 16,
 
     },
 
@@ -311,7 +318,7 @@ const styles = StyleSheet.create({
         height: 50,
         borderRadius: 8,
         padding: 16,
-        marginBottom: 16,
+      
 
         borderBottomWidth: 1,
         borderLeftWidth: 1,
@@ -346,7 +353,6 @@ const styles = StyleSheet.create({
         borderRadius: 100,
         justifyContent: "center",
         alignItems: "center",
-        marginTop: 27,
     
     },
     btnTitle: {
@@ -357,7 +363,6 @@ const styles = StyleSheet.create({
     navLink: {
         textAlign: 'center',
         marginTop: 16,
-        marginBottom: 45,
         color: '#1B4371',
     },
 
