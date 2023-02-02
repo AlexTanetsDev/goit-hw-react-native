@@ -1,11 +1,15 @@
 import { StyleSheet, View } from 'react-native';
-import { RegistrationScreen } from './src/Screens/RegistrationSccreen/RegistrationScreen';
-import { LoginScreen } from './src/Screens/LoginScreen/LoginScreen';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useCallback } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { RegistrationScreen } from './src/Screens/RegistrationSccreen/RegistrationScreen';
+import { LoginScreen } from './src/Screens/LoginScreen/LoginScreen';
+import { Home } from './src/Screens/Home/Home';
 
 SplashScreen.preventAutoHideAsync();
+const MainStack = createStackNavigator();
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -26,8 +30,21 @@ export default function App() {
 
   return (
     <View style={styles.container} onLayout={onLayoutRootView}>
-      {/* <LoginScreen /> */}
-      <RegistrationScreen />
+      <NavigationContainer>
+        <MainStack.Navigator initialRouteName="LoginScreen">
+          <MainStack.Screen
+            options={{ headerShown: false }}
+            name="RegistrationScreen"
+            component={RegistrationScreen}
+          />
+          <MainStack.Screen
+            options={{ headerShown: false }}
+            name="LoginScreen"
+            component={LoginScreen}
+          />
+          <MainStack.Screen options={{ headerShown: false }} name="Home" component={Home} />
+        </MainStack.Navigator>
+      </NavigationContainer>
     </View>
   );
 }

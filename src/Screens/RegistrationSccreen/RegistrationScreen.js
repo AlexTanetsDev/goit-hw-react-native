@@ -14,7 +14,7 @@ import {
 import { useState, useEffect } from 'react';
 import { registrStyles } from './RegaistrationScreen.styles';
 
-export const RegistrationScreen = () => {
+export const RegistrationScreen = ({ navigation }) => {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
@@ -30,9 +30,7 @@ export const RegistrationScreen = () => {
   const [isValidLogin, setIsValidLogin] = useState(true);
   const [isValidPassvord, setIsValidPassvord] = useState(true);
 
-  const [isHorizontal, setIsHorizontal] = useState(
-    Dimensions.get('window').width > 450,
-  );
+  const [isHorizontal, setIsHorizontal] = useState(Dimensions.get('window').width > 450);
 
   const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
@@ -61,15 +59,15 @@ export const RegistrationScreen = () => {
     return () => subscription?.remove();
   }, []);
 
-  const handleEmailImputChange = value => {
+  const handleEmailImputChange = (value) => {
     setEmail(value);
   };
 
-  const handlePasswordChange = value => {
+  const handlePasswordChange = (value) => {
     setPassword(value);
   };
 
-  const handleLoginChange = value => {
+  const handleLoginChange = (value) => {
     setLogin(value);
   };
 
@@ -88,6 +86,7 @@ export const RegistrationScreen = () => {
     setEmail('');
     setLogin('');
     setPassword('');
+    navigation.navigate('Home');
   };
 
   const togglePasswordShow = () => setShowPassword(!showPassword);
@@ -117,35 +116,29 @@ export const RegistrationScreen = () => {
         style={registrStyles.backgroundImg}
       >
         <View style={registrStyles.wrapper}>
-          <KeyboardAvoidingView
-            behavior={Platform.OS == 'ios' ? 'padding' : ''}
-          >
-            <View
-              style={{
-                ...registrStyles.registrationFormBox,
-                paddingBottom: isHorizontal ? 30 : 60,
-              }}
-            >
+          <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? 'padding' : ''}>
+            <View style={registrStyles.registrationFormBox}>
               <View style={registrStyles.avatarBox}>
                 <View style={registrStyles.addAvatarBtn}>
                   <Image source={require('../../../assets/Union.png')}></Image>
                 </View>
               </View>
 
-              <Text style={registrStyles.formTitle}>Регистрация</Text>
+              <Text
+                style={{
+                  ...registrStyles.formTitle,
+                  marginBottom: isHorizontal ? 10 : 33,
+                }}
+              >
+                Регистрация
+              </Text>
               <View style={registrStyles.form}>
                 <View style={{ marginBottom: 16 }}>
                   {!isValidLogin && (
-                    <Text style={registrStyles.inValidValue}>
-                      Это обязательное поле
-                    </Text>
+                    <Text style={registrStyles.inValidValue}>Это обязательное поле</Text>
                   )}
                   <TextInput
-                    style={
-                      isLoginInputOnFocus
-                        ? registrStyles.inputOnFocus
-                        : registrStyles.input
-                    }
+                    style={isLoginInputOnFocus ? registrStyles.inputOnFocus : registrStyles.input}
                     placeholder={'Логин'}
                     placeholderTextColor={'#BDBDBD'}
                     onChangeText={handleLoginChange}
@@ -164,17 +157,11 @@ export const RegistrationScreen = () => {
 
                 <View style={{ marginBottom: 16 }}>
                   {!isValidEmail && (
-                    <Text style={registrStyles.inValidValue}>
-                      Некорректное значение
-                    </Text>
+                    <Text style={registrStyles.inValidValue}>Некорректное значение</Text>
                   )}
 
                   <TextInput
-                    style={
-                      isEmailImputOnFocus
-                        ? registrStyles.inputOnFocus
-                        : registrStyles.input
-                    }
+                    style={isEmailImputOnFocus ? registrStyles.inputOnFocus : registrStyles.input}
                     keyboardType={'email-address'}
                     placeholder={'Адрес электронной почты'}
                     placeholderTextColor={'#BDBDBD'}
@@ -194,24 +181,15 @@ export const RegistrationScreen = () => {
 
                 <View style={{ marginBottom: isHorizontal ? 15 : 43 }}>
                   {!isValidPassvord && (
-                    <Text style={registrStyles.inValidValue}>
-                      Это обязательное поле
-                    </Text>
+                    <Text style={registrStyles.inValidValue}>Это обязательное поле</Text>
                   )}
                   <View style={{ position: 'relative' }}>
-                    <Text
-                      style={registrStyles.passwordShowText}
-                      onPress={togglePasswordShow}
-                    >
+                    <Text style={registrStyles.passwordShowText} onPress={togglePasswordShow}>
                       {!showPassword ? 'Показать' : 'Скрыть'}
                     </Text>
 
                     <TextInput
-                      style={
-                        isPassImputOnFocus
-                          ? registrStyles.inputOnFocus
-                          : registrStyles.input
-                      }
+                      style={isPassImputOnFocus ? registrStyles.inputOnFocus : registrStyles.input}
                       secureTextEntry={!showPassword}
                       placeholder={'Пароль'}
                       placeholderTextColor={'#BDBDBD'}
@@ -242,8 +220,14 @@ export const RegistrationScreen = () => {
               </View>
 
               {!isShowKeyboard && (
-                <Text style={registrStyles.navLink}>
-                  Уже есть аккаунт? Войти
+                <Text
+                  style={{
+                    ...registrStyles.navLink,
+                    marginBottom: isHorizontal ? 0 : 30,
+                  }}
+                >
+                  Уже есть аккаунт?{' '}
+                  <Text onPress={() => navigation.navigate('LoginScreen')}>Войти</Text>
                 </Text>
               )}
             </View>

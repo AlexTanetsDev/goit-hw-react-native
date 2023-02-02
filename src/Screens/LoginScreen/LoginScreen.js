@@ -13,7 +13,7 @@ import {
 import { useState, useEffect } from 'react';
 import { loginStyles } from './LoginScreen.styles';
 
-export const LoginScreen = () => {
+export const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
@@ -24,9 +24,7 @@ export const LoginScreen = () => {
   const [isValidEmail, setIsValidEmail] = useState(true);
   const [isValidPassvord, setIsValidPassvord] = useState(true);
 
-  const [isHorizontal, setIsHorizontal] = useState(
-    Dimensions.get('window').width > 450,
-  );
+  const [isHorizontal, setIsHorizontal] = useState(Dimensions.get('window').width > 450);
 
   const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
@@ -49,11 +47,11 @@ export const LoginScreen = () => {
     return () => subscription?.remove();
   }, []);
 
-  const handleEmailImputChange = value => {
+  const handleEmailImputChange = (value) => {
     setEmail(value);
   };
 
-  const handlePasswordChange = value => {
+  const handlePasswordChange = (value) => {
     setPassword(value);
   };
 
@@ -71,6 +69,7 @@ export const LoginScreen = () => {
     console.log({ email: email, password: password });
     setEmail('');
     setPassword('');
+    navigation.navigate('Home');
   };
 
   const togglePasswordShow = () => setShowPassword(!showPassword);
@@ -94,24 +93,16 @@ export const LoginScreen = () => {
         style={loginStyles.backgroundImg}
       >
         <View style={loginStyles.wrapper}>
-          <KeyboardAvoidingView
-            behavior={Platform.OS == 'ios' ? 'padding' : ''}
-          >
+          <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? 'padding' : ''}>
             <View style={loginStyles.registrationFormBox}>
               <Text style={loginStyles.formTitle}>Войти</Text>
               <View style={loginStyles.form}>
                 <View style={{ marginBottom: 16 }}>
                   {!isValidEmail && (
-                    <Text style={loginStyles.inValidValue}>
-                      Некорректное значение
-                    </Text>
+                    <Text style={loginStyles.inValidValue}>Некорректное значение</Text>
                   )}
                   <TextInput
-                    style={
-                      isLoginInputOnFocus
-                        ? loginStyles.inputOnFocus
-                        : loginStyles.input
-                    }
+                    style={isLoginInputOnFocus ? loginStyles.inputOnFocus : loginStyles.input}
                     keyboardType={'email-address'}
                     placeholder={'Адрес электронной почты'}
                     onChangeText={handleEmailImputChange}
@@ -131,23 +122,14 @@ export const LoginScreen = () => {
 
                 <View style={{ marginBottom: isHorizontal ? 20 : 43 }}>
                   {!isValidPassvord && (
-                    <Text style={loginStyles.inValidValue}>
-                      Это обязательное поле
-                    </Text>
+                    <Text style={loginStyles.inValidValue}>Это обязательное поле</Text>
                   )}
                   <View style={{ position: 'relative' }}>
-                    <Text
-                      style={loginStyles.passwordShowText}
-                      onPress={togglePasswordShow}
-                    >
+                    <Text style={loginStyles.passwordShowText} onPress={togglePasswordShow}>
                       {!showPassword ? 'Показать' : 'Скрыть'}
                     </Text>
                     <TextInput
-                      style={
-                        isPassImputOnFocus
-                          ? loginStyles.inputOnFocus
-                          : loginStyles.input
-                      }
+                      style={isPassImputOnFocus ? loginStyles.inputOnFocus : loginStyles.input}
                       secureTextEntry={!showPassword}
                       placeholder={'Пароль'}
                       onChangeText={handlePasswordChange}
@@ -184,7 +166,10 @@ export const LoginScreen = () => {
                     marginBottom: isHorizontal ? 20 : 115,
                   }}
                 >
-                  Нет аккаунта? Зарегистрироваться
+                  Нет аккаунта?{' '}
+                  <Text onPress={() => navigation.navigate('RegistrationScreen')}>
+                    Зарегистрироваться
+                  </Text>
                 </Text>
               )}
             </View>
