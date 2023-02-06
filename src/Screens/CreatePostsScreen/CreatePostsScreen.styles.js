@@ -34,6 +34,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 8,
     marginBottom: 8,
+    resizeMode: 'cover',
   },
 
   addPhotoBtn: {

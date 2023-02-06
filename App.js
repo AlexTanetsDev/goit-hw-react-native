@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { ImageBackground, StyleSheet, View } from 'react-native';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useCallback } from 'react';
@@ -31,7 +31,7 @@ export default function App() {
   return (
     <View style={styles.container} onLayout={onLayoutRootView}>
       <NavigationContainer>
-        <MainStack.Navigator initialRouteName="LoginScreen">
+        <MainStack.Navigator initialRouteName="Home">
           <MainStack.Screen
             options={{ headerShown: false }}
             name="RegistrationScreen"
