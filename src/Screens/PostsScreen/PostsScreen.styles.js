@@ -12,6 +12,7 @@ export const styles = StyleSheet.create({
   user: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 5,
   },
   userAvatar: {
     width: 60,
@@ -28,5 +29,28 @@ export const styles = StyleSheet.create({
 
   userEmail: {
     fontSize: 11,
+  },
+
+  footer: {
+    marginTop: 'auto',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    borderTopWidth: 0.5,
+    borderTopColor: '#BDBDBD',
+    height: 50,
+    backgroundColor: '#fff',
+    paddingHorizontal: 35,
+    paddingBottom: 3,
+  },
+
+  footerBtn: {
+    width: 70,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#FF6C00',
+    marginTop: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

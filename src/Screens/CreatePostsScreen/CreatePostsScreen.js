@@ -12,6 +12,7 @@ import { Fontisto, SimpleLineIcons, Feather, AntDesign } from '@expo/vector-icon
 import { useState, useEffect } from 'react';
 import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
+import * as Location from 'expo-location';
 
 export const CreatePostsScreen = ({ navigation }) => {
   const [postName, setPostName] = useState('');
@@ -24,7 +25,7 @@ export const CreatePostsScreen = ({ navigation }) => {
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [photo, setPhoto] = useState('');
 
-  const [posts, setPosts] = useState([]);
+  const [location, setLocation] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -32,6 +33,19 @@ export const CreatePostsScreen = ({ navigation }) => {
       await MediaLibrary.requestPermissionsAsync();
 
       setHasPermission(status === 'granted');
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation({ latitude: location.coords.latitude, longitude: location.coords.longitude });
     })();
   }, []);
 
@@ -61,10 +75,6 @@ export const CreatePostsScreen = ({ navigation }) => {
     setPhoto('');
     setPostName('');
     setPostLocation('');
-  };
-
-  const onPostCreate = (post) => {
-    setPosts((prevstate) => [...prevstate, post]);
   };
 
   return (
@@ -100,13 +110,7 @@ export const CreatePostsScreen = ({ navigation }) => {
 
             {photoView === 'camera' && (
               <Camera
-                style={{
-                  height: '80%',
-                  position: 'relative',
-                  justifyContent: 'flex-end',
-                  alignItems: 'center',
-                  padding: 10,
-                }}
+                style={styles.camera}
                 ref={(ref) => {
                   setCameraRef(ref);
                 }}
@@ -184,10 +188,14 @@ export const CreatePostsScreen = ({ navigation }) => {
                   backgroundColor: useDisableBtn() ? '#F6F6F6' : '#FF6C00',
                 }}
                 onPress={() => {
-                  navigation.navigate('PostsScreen', {
-                    uri: photo,
-                    postTitle: postName,
-                    postLocation: postLocation,
+                  navigation.navigate('PostsNavScreen', {
+                    screen: 'Posts',
+                    params: {
+                      uri: photo,
+                      postTitle: postName,
+                      postLocation: postLocation,
+                      location: location,
+                    },
                   });
                   resetPostState();
                 }}

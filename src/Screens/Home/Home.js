@@ -1,10 +1,10 @@
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { styles } from './Home.styles';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { PostsScreen } from '../PostsScreen/PostsScreen';
 import { CreatePostsScreen } from '../CreatePostsScreen/CreatePostsScreen';
 import { ProfileScreen } from '../ProfileScreen/ProfileScreen';
-import { Feather, AntDesign, MaterialIcons } from '@expo/vector-icons';
+import { Feather, AntDesign } from '@expo/vector-icons';
+import { PostsNavigationScreen } from '../PostsNavigationScreen/PostsNavigationScreen';
 
 const Tabs = createBottomTabNavigator();
 
@@ -13,24 +13,15 @@ export const Home = () => {
     <View style={styles.container}>
       <Tabs.Navigator>
         <Tabs.Screen
-          name="PostsScreen"
-          component={PostsScreen}
+          name="PostsNavScreen"
+          component={PostsNavigationScreen}
           options={{
-            headerRight: () => {
-              return (
-                <TouchableOpacity style={styles.logoutBtn}>
-                  <MaterialIcons name="logout" size={24} color="#BDBDBD" />
-                </TouchableOpacity>
-              );
-            },
-            headerTitle: 'Публикации',
-            headerTitleAlign: 'center',
-            headerTitleStyle: { fontFamily: 'Medium', fontSize: 17, lineHeight: 22 },
-            tabBarShowLabel: false,
+            headerShown: false,
             tabBarButton: (props) => <TouchableOpacity {...props} />,
             tabBarIcon: ({ focused, color, size }) => {
               return <AntDesign name="appstore-o" size={size} color={color} />;
             },
+            tabBarStyle: { display: 'none' },
           }}
         />
         <Tabs.Screen

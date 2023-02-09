@@ -37,6 +37,14 @@ export const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
 
+  camera: {
+    height: '80%',
+    position: 'relative',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    padding: 10,
+  },
+
   addPhotoBtn: {
     backgroundColor: '#fff',
     width: 60,

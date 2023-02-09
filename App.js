@@ -31,7 +31,7 @@ export default function App() {
   return (
     <View style={styles.container} onLayout={onLayoutRootView}>
       <NavigationContainer>
-        <MainStack.Navigator initialRouteName="Home">
+        <MainStack.Navigator initialRouteName="RegistrationScreen">
           <MainStack.Screen
             options={{ headerShown: false }}
             name="RegistrationScreen"
