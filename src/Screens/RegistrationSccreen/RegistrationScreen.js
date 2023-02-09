@@ -13,6 +13,8 @@ import {
 } from 'react-native';
 import { useState, useEffect } from 'react';
 import { registrStyles } from './RegaistrationScreen.styles';
+import { useDispatch } from 'react-redux';
+import { register } from '../../Redux/Auth/operations';
 
 export const RegistrationScreen = ({ navigation }) => {
   const [login, setLogin] = useState('');
@@ -32,6 +34,7 @@ export const RegistrationScreen = ({ navigation }) => {
 
   const [isHorizontal, setIsHorizontal] = useState(Dimensions.get('window').width > 450);
 
+  const dispatch = useDispatch();
   const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
   useEffect(() => {
@@ -82,7 +85,8 @@ export const RegistrationScreen = ({ navigation }) => {
       return;
     }
 
-    console.log({ email: email, login: login, password: password });
+    dispatch(register({ email: email, login: login, password: password }));
+
     setEmail('');
     setLogin('');
     setPassword('');
