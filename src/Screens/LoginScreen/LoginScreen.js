@@ -12,6 +12,8 @@ import {
 } from 'react-native';
 import { useState, useEffect } from 'react';
 import { loginStyles } from './LoginScreen.styles';
+import { logIn } from '../../Redux/Auth/operations';
+import { useDispatch } from 'react-redux';
 
 export const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
@@ -25,7 +27,7 @@ export const LoginScreen = ({ navigation }) => {
   const [isValidPassvord, setIsValidPassvord] = useState(true);
 
   const [isHorizontal, setIsHorizontal] = useState(Dimensions.get('window').width > 450);
-
+  const dispatch = useDispatch();
   const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
   useEffect(() => {
@@ -66,10 +68,9 @@ export const LoginScreen = ({ navigation }) => {
       return;
     }
 
-    console.log({ email: email, password: password });
+    dispatch(logIn({ email: email, password: password }));
     setEmail('');
     setPassword('');
-    navigation.navigate('Home');
   };
 
   const togglePasswordShow = () => setShowPassword(!showPassword);

@@ -5,9 +5,14 @@ import { CommentsScreen } from '../CommentsScreen/CommentsScreen';
 import { MapScreen } from '../MapScreen/MapScreen';
 import { MaterialIcons } from '@expo/vector-icons';
 
+import { useDispatch } from 'react-redux';
+import { logOut } from '../../Redux/Auth/authSlice';
+
 const PostsStack = createStackNavigator();
 
 export const PostsNavigationScreen = () => {
+  const dispatch = useDispatch();
+
   return (
     <PostsStack.Navigator>
       <PostsStack.Screen
@@ -16,7 +21,7 @@ export const PostsNavigationScreen = () => {
         options={{
           headerRight: () => {
             return (
-              <TouchableOpacity style={{ marginRight: 10 }}>
+              <TouchableOpacity style={{ marginRight: 10 }} onPress={() => dispatch(logOut())}>
                 <MaterialIcons name="logout" size={24} color="#BDBDBD" />
               </TouchableOpacity>
             );

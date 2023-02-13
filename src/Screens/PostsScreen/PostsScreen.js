@@ -2,13 +2,32 @@ import { useEffect, useState } from 'react';
 import { View, Text, Image, FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
 import { styles } from './PostsScreen.styles';
 import { SimpleLineIcons, AntDesign, Feather } from '@expo/vector-icons';
+import { updateProfile } from 'firebase/auth';
+import { auth } from '../../firebase/config';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../../Redux/Auth/selectors';
 
 export const PostsScreen = ({ route, navigation }) => {
   const [posts, setPosts] = useState([]);
+  const user = useSelector(selectUser);
+
   useEffect(() => {
     if (route.params && !posts.includes(route.params))
       setPosts((prevstate) => [...prevstate, route.params]);
   }, [route.params]);
+
+  useEffect(() => {
+    updateProfile(auth.currentUser, {
+      displayName: user.login,
+      photoURL: user.userPhoto,
+    })
+      .then(() => {
+        console.log('Updated!!!');
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   return (
     <>

@@ -85,12 +85,10 @@ export const RegistrationScreen = ({ navigation }) => {
       return;
     }
 
-    dispatch(register({ email: email, login: login, password: password }));
-
+    dispatch(register({ email: email, login: login, password: password, userPhoto: 'somePhoto' }));
     setEmail('');
     setLogin('');
     setPassword('');
-    navigation.navigate('Home');
   };
 
   const togglePasswordShow = () => setShowPassword(!showPassword);
