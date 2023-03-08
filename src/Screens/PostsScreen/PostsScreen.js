@@ -6,34 +6,47 @@ import { updateProfile } from 'firebase/auth';
 import { auth } from '../../firebase/config';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../../Redux/Auth/selectors';
+import { ref, uploadBytes } from 'firebase/storage';
+import { storage } from '../../firebase/config';
 
 export const PostsScreen = ({ route, navigation }) => {
   const [posts, setPosts] = useState([]);
   const user = useSelector(selectUser);
+  const [photo, setPhoto] = useState(user.photoURL);
 
   useEffect(() => {
     if (route.params && !posts.includes(route.params))
       setPosts((prevstate) => [...prevstate, route.params]);
   }, [route.params]);
 
-  useEffect(() => {
-    updateProfile(auth.currentUser, {
-      displayName: user.login,
-      photoURL: user.userPhoto,
-    })
-      .then(() => {
-        console.log('Updated!!!');
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+  // useEffect(() => {
+  //   updateProfile(auth.currentUser, {
+  //     displayName: user.login,
+  //     photoURL: user.userPhoto,
+  //   })
+  //     .then(() => {
+  //       console.log('Updated!!!');
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // }, []);
 
+  useEffect(() => {
+    // const storageRef = ref(storage, 'photos');
+    // const testImg = fetch(photo);
+    // console.log(photo);
+    // console.log(testImg);
+    // const testFile = testImg.blob();
+    // uploadBytes(storageRef, testFile).then((snapshot) => {
+    //   console.log('Uploaded a blob or file!');
+    // });
+  }, []);
   return (
     <>
       <View style={styles.container}>
         <View style={styles.user}>
-          <Image source={require('../../../assets/UserAva.jpg')} style={styles.userAvatar} />
+          <Image source={require('../../../assets/images/UserAva.jpg')} style={styles.userAvatar} />
           <View style={styles.userInfo}>
             <Text style={styles.userName}>Natali Romanova</Text>
             <Text style={styles.userEmail}>email@example.com</Text>
@@ -56,7 +69,7 @@ export const PostsScreen = ({ route, navigation }) => {
                         onPress={() => navigation.navigate('Comment', { uri: item.uri })}
                       >
                         <Image
-                          source={require('../../../assets/Shape.png')}
+                          source={require('../../../assets/images/Shape.png')}
                           style={{ width: 18, height: 18, marginRight: 9 }}
                         />
                       </TouchableOpacity>

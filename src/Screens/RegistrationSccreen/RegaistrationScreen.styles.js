@@ -35,12 +35,24 @@ export const registrStyles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     right: -12,
+    zIndex: 100,
 
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: '#FF6C00',
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+
+    backgroundColor: '#FFFFFF',
+
+    width: 25,
+    height: 25,
+  },
+
+  deleteAvatarBtn: {
+    position: 'absolute',
+    bottom: 20,
+    right: -12,
+    zIndex: 100,
+
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',

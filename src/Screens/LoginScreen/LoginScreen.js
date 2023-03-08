@@ -90,7 +90,7 @@ export const LoginScreen = ({ navigation }) => {
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <ImageBackground
-        source={require('../../../assets/PhotoBG.jpg')}
+        source={require('../../../assets/images/PhotoBG.jpg')}
         style={loginStyles.backgroundImg}
       >
         <View style={loginStyles.wrapper}>

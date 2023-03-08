@@ -12,11 +12,17 @@ import {
   Dimensions,
 } from 'react-native';
 import { useState, useEffect } from 'react';
+import * as ImagePicker from 'expo-image-picker';
 import { registrStyles } from './RegaistrationScreen.styles';
 import { useDispatch } from 'react-redux';
 import { register } from '../../Redux/Auth/operations';
+import { AntDesign } from '@expo/vector-icons';
+// test
+// import { ref, uploadBytes } from 'firebase/storage';
+// import { storage } from '../../firebase/config';
 
 export const RegistrationScreen = ({ navigation }) => {
+  const [avatar, setAvatar] = useState(null);
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
@@ -85,7 +91,7 @@ export const RegistrationScreen = ({ navigation }) => {
       return;
     }
 
-    dispatch(register({ email: email, login: login, password: password, userPhoto: 'somePhoto' }));
+    dispatch(register({ email: email, login: login, password: password, userPhoto: avatar }));
     setEmail('');
     setLogin('');
     setPassword('');
@@ -111,19 +117,59 @@ export const RegistrationScreen = ({ navigation }) => {
     }
   };
 
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setAvatar(result.assets[0].uri);
+    }
+  };
+
+  // const tester = async () => {
+  //   const storageRef = ref(storage, 'photos');
+
+  //   const testImg = fetch(avatar);
+  //   const testFile = new File([testImg], 'avatar.jpg');
+
+  //   uploadBytes(storageRef, testFile).then((snapshot) => {
+  //     console.log('Uploaded a blob or file!');
+  //   });
+  // };
+
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <ImageBackground
-        source={require('../../../assets/PhotoBG.jpg')}
+        source={require('../../../assets/images/PhotoBG.jpg')}
         style={registrStyles.backgroundImg}
       >
         <View style={registrStyles.wrapper}>
           <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? 'padding' : ''}>
             <View style={registrStyles.registrationFormBox}>
               <View style={registrStyles.avatarBox}>
-                <View style={registrStyles.addAvatarBtn}>
-                  <Image source={require('../../../assets/Union.png')}></Image>
-                </View>
+                {!avatar ? (
+                  <TouchableOpacity style={registrStyles.addAvatarBtn} onPress={pickImage}>
+                    <AntDesign name="pluscircleo" size={24} color="#FF6C00" />
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity
+                    style={registrStyles.deleteAvatarBtn}
+                    onPress={() => setAvatar(null)}
+                  >
+                    <AntDesign name="closecircleo" size={24} color="#BDBDBD" />
+                  </TouchableOpacity>
+                )}
+
+                {avatar && (
+                  <Image
+                    source={{ uri: avatar }}
+                    style={{ width: 120, height: 120, borderRadius: 16 }}
+                  />
+                )}
               </View>
 
               <Text
@@ -134,6 +180,11 @@ export const RegistrationScreen = ({ navigation }) => {
               >
                 Регистрация
               </Text>
+              {/* test */}
+              {/* <TouchableOpacity style={{ backgroundColor: 'green', height: 50 }} onPress={tester}>
+                <Text>Send</Text>
+              </TouchableOpacity> */}
+              {/* test */}
               <View style={registrStyles.form}>
                 <View style={{ marginBottom: 16 }}>
                   {!isValidLogin && (
@@ -228,7 +279,7 @@ export const RegistrationScreen = ({ navigation }) => {
                     marginBottom: isHorizontal ? 0 : 30,
                   }}
                 >
-                  Уже есть аккаунт?{' '}
+                  Уже есть аккаунт?
                   <Text onPress={() => navigation.navigate('LoginScreen')}>Войти</Text>
                 </Text>
               )}

@@ -15,7 +15,7 @@ export const RootRoutingPage = () => {
   const dispatch = useDispatch();
   const logInStatus = useSelector(selectLoginStatus);
   const error = useSelector(selectError);
-  console.log(logInStatus);
+
   return (
     <>
       {logInStatus === 'default' && (

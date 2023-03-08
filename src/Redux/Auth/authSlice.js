@@ -31,16 +31,17 @@ const authSlice = createSlice({
         state.error = action.payload;
       });
 
-    builder.addCase(updateUser.fulfilled, (state, action) => {
-      state.user = { ...state.user, login: action.payload.displayName };
-    });
+    // builder.addCase(updateUser.fulfilled, (state, action) => {
+    //   state.user = { ...state.user, login: action.payload.displayName };
+    // });
 
     builder
       .addCase(logIn.pending, (state) => {
         state.logInStatus = 'pending';
       })
       .addCase(logIn.fulfilled, (state, action) => {
-        state.user = { ...state.user, id: action.payload.id, email: action.payload.email };
+        const { id, email, login, photoURL } = action.payload;
+        state.user = { id, email, login, photoURL };
         state.logInStatus = 'fulfield';
         state.error = null;
       })

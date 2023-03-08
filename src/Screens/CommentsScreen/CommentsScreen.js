@@ -40,7 +40,7 @@ export const CommentsScreen = ({ route, navigation }) => {
                   <Text style={{ fontSize: 10, color: '#BDBDBD' }}>Date/Of/post</Text>
                 </View>
                 <Image
-                  source={require('../../../assets/UserAva.jpg')}
+                  source={require('../../../assets/images/UserAva.jpg')}
                   style={{ height: 28, width: 28, borderRadius: 14, marginLeft: 16 }}
                 />
               </View>

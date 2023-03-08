@@ -13,6 +13,9 @@ import { useState, useEffect } from 'react';
 import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import * as Location from 'expo-location';
+// test
+// import { collection, addDoc } from 'firebase/firestore';
+// import { db } from '../../firebase/config';
 
 export const CreatePostsScreen = ({ navigation }) => {
   const [postName, setPostName] = useState('');
@@ -76,7 +79,6 @@ export const CreatePostsScreen = ({ navigation }) => {
     setPostName('');
     setPostLocation('');
   };
-
   return (
     <>
       <View style={styles.customHeader}>
