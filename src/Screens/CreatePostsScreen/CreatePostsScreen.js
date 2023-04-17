@@ -13,13 +13,20 @@ import { useState, useEffect } from 'react';
 import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import * as Location from 'expo-location';
+import { v4 } from 'uuid';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectUser } from '../../Redux/Auth/selectors';
+import { fetchPosts } from '../../Redux/Posts/operations';
 // test
-// import { collection, addDoc } from 'firebase/firestore';
-// import { db } from '../../firebase/config';
+import { collection, addDoc, doc } from 'firebase/firestore';
+import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
+import { db, storage } from '../../firebase/config';
+import { setError } from '../../Redux/Posts/postSlice';
 
 export const CreatePostsScreen = ({ navigation }) => {
   const [postName, setPostName] = useState('');
   const [postLocation, setPostLocation] = useState('');
+
   const [isKeyboardShown, setIsKeyboardShown] = useState(false);
   const [photoView, setPhotoView] = useState('default');
 
@@ -29,6 +36,9 @@ export const CreatePostsScreen = ({ navigation }) => {
   const [photo, setPhoto] = useState('');
 
   const [location, setLocation] = useState(null);
+
+  const { id, login } = useSelector(selectUser);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async () => {
@@ -70,7 +80,7 @@ export const CreatePostsScreen = ({ navigation }) => {
   };
 
   const useDisableBtn = () => {
-    return postName === '' || postLocation === '' || photo === '';
+    return postName.trim() === '' || postLocation.trim() === '' || photo.trim() === '';
   };
 
   const resetPostState = () => {
@@ -79,6 +89,45 @@ export const CreatePostsScreen = ({ navigation }) => {
     setPostName('');
     setPostLocation('');
   };
+
+  const onPhotoCreate = async () => {
+    if (cameraRef) {
+      const { uri } = await cameraRef.takePictureAsync();
+      await MediaLibrary.createAssetAsync(uri);
+      setPhoto(uri);
+    }
+    setPhotoView('preview');
+  };
+
+  const onSubmit = async () => {
+    try {
+      const response = await fetch(photo);
+      const file = await response.blob();
+      const imageId = v4();
+      const storageRef = ref(storage, `postImage/${imageId}`);
+      await uploadBytes(storageRef, file);
+      const storageUrlPhoto = await getDownloadURL(ref(storage, `postImage/${imageId}`));
+
+      const post = {
+        login,
+        owner: id,
+        postName,
+        postLocation,
+        storageUrlPhoto,
+        commentCounter: 0,
+      };
+
+      if (location) post.location = location;
+      const postRef = await addDoc(collection(db, 'posts'), post);
+      dispatch(fetchPosts());
+    } catch (error) {
+      dispatch(setError(error));
+    }
+
+    resetPostState();
+    navigation.navigate('PostsNavScreen');
+  };
+
   return (
     <>
       <View style={styles.customHeader}>
@@ -117,17 +166,7 @@ export const CreatePostsScreen = ({ navigation }) => {
                   setCameraRef(ref);
                 }}
               >
-                <TouchableOpacity
-                  style={{ ...styles.addPhotoBtn }}
-                  onPress={async () => {
-                    if (cameraRef) {
-                      const { uri } = await cameraRef.takePictureAsync();
-                      await MediaLibrary.createAssetAsync(uri);
-                      setPhoto(uri);
-                    }
-                    setPhotoView('preview');
-                  }}
-                >
+                <TouchableOpacity style={{ ...styles.addPhotoBtn }} onPress={onPhotoCreate}>
                   <Fontisto name="camera" size={20} color="#BDBDBD" />
                 </TouchableOpacity>
               </Camera>
@@ -189,18 +228,7 @@ export const CreatePostsScreen = ({ navigation }) => {
                   ...styles.addPostBtn,
                   backgroundColor: useDisableBtn() ? '#F6F6F6' : '#FF6C00',
                 }}
-                onPress={() => {
-                  navigation.navigate('PostsNavScreen', {
-                    screen: 'Posts',
-                    params: {
-                      uri: photo,
-                      postTitle: postName,
-                      postLocation: postLocation,
-                      location: location,
-                    },
-                  });
-                  resetPostState();
-                }}
+                onPress={onSubmit}
               >
                 <Text
                   style={{ ...styles.addBtnTitle, color: useDisableBtn() ? '#BDBDBD' : '#fff' }}

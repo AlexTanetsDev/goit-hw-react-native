@@ -11,7 +11,7 @@ const middleware = [
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    // posts: postsReducer,
+    posts: postsReducer,
     middleware,
   },
 });

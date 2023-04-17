@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { fetchPosts, addPost, deletePost } from './operations';
 
-const initialContcatsState = {
-  items: [],
+const initialPostsState = {
+  items: null,
   isLoading: false,
   error: null,
 };
@@ -15,9 +15,14 @@ const handleRejected = (state, action) => {
   state.error = action.payload;
 };
 
-const contactsSlice = createSlice({
+const postsSlice = createSlice({
   name: 'posts',
-  initialState: initialContcatsState,
+  initialState: initialPostsState,
+  reducers: {
+    setError(state, action) {
+      state.error = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchPosts.pending, handlePending)
@@ -28,26 +33,27 @@ const contactsSlice = createSlice({
       })
       .addCase(fetchPosts.rejected, handleRejected);
 
-    builder
-      .addCase(addPost.pending, handlePending)
-      .addCase(addPost.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.error = null;
-        state.items.push(action.payload);
-      })
-      .addCase(addPost.rejected, handleRejected);
+    // builder
+    //   .addCase(addPost.pending, handlePending)
+    //   .addCase(addPost.fulfilled, (state, action) => {
+    //     state.isLoading = false;
+    //     state.error = null;
+    //     state.items.push(action.payload);
+    //   })
+    //   .addCase(addPost.rejected, handleRejected);
 
-    builder
-      .addCase(deletePost.pending, handlePending)
-      .addCase(deletePost.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.error = null;
+    // builder
+    //   .addCase(deletePost.pending, handlePending)
+    //   .addCase(deletePost.fulfilled, (state, action) => {
+    //     state.isLoading = false;
+    //     state.error = null;
 
-        const index = state.items.findIndex((task) => task.id === action.payload.id);
-        state.items.splice(index, 1);
-      })
-      .addCase(deletePost.rejected, handleRejected);
+    //     const index = state.items.findIndex((task) => task.id === action.payload.id);
+    //     state.items.splice(index, 1);
+    //   })
+    //   .addCase(deletePost.rejected, handleRejected);
   },
 });
 
-export const postsReducer = contactsSlice.reducer;
+export const postsReducer = postsSlice.reducer;
+export const { setError } = postsSlice.actions;

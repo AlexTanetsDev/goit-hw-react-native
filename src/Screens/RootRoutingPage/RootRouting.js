@@ -6,15 +6,28 @@ import { useSelector } from 'react-redux';
 import { selectError, selectLoginStatus } from '../../Redux/Auth/selectors';
 import { View, Text, TouchableOpacity } from 'react-native';
 
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { logOut } from '../../Redux/Auth/authSlice';
+import { checkUser } from '../../Redux/Auth/operations';
 
+import { auth } from '../../firebase/config';
+import { onAuthStateChanged } from 'firebase/auth';
 const MainStack = createStackNavigator();
 
 export const RootRoutingPage = () => {
   const dispatch = useDispatch();
   const logInStatus = useSelector(selectLoginStatus);
   const error = useSelector(selectError);
+
+  // const [isFirstRender, setIsFirstRender] = useState(true);
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      console.log(user);
+    });
+    // dispatch(checkUser());
+  }, []);
 
   return (
     <>

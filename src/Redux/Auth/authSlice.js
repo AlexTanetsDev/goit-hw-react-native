@@ -1,8 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { register, logIn, updateUser } from './operations';
+import { register, logIn, checkUser } from './operations';
+import { auth } from '../../firebase/config';
 
 const initialState = {
-  user: { name: null, email: null, id: null },
+  user: { name: null, email: null, id: null, avatar: null },
   logInStatus: 'default',
   error: null,
 };
@@ -31,8 +32,14 @@ const authSlice = createSlice({
         state.error = action.payload;
       });
 
-    // builder.addCase(updateUser.fulfilled, (state, action) => {
-    //   state.user = { ...state.user, login: action.payload.displayName };
+    // builder.addCase(checkUser.fulfilled, (state, action) => {
+    //   const currentUser = action.payload;
+
+    //   if (currentUser.email) {
+    //     state.user = currentUser;
+    //     state.logInStatus = 'fulfield';
+    //   }
+    //   // console.log(currentUser);
     // });
 
     builder
@@ -40,8 +47,8 @@ const authSlice = createSlice({
         state.logInStatus = 'pending';
       })
       .addCase(logIn.fulfilled, (state, action) => {
-        const { id, email, login, photoURL } = action.payload;
-        state.user = { id, email, login, photoURL };
+        const { id, email, login, avatar } = action.payload;
+        state.user = { id, email, login, avatar };
         state.logInStatus = 'fulfield';
         state.error = null;
       })

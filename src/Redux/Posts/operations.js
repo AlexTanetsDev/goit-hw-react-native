@@ -1,13 +1,22 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../../firebase/config';
 
-// export const fetchPosts = createAsyncThunk('contacts/fetchAll', async (_, thunkAPI) => {
-//   try {
-//     const response = await axios.get('/contacts');
-//     return response.data;
-//   } catch (error) {
-//     return thunkAPI.rejectWithValue(error.message);
-//   }
+// const querySnapshot = await getDocs(collection(db, 'users'));
+// querySnapshot.forEach((doc) => {
+//   console.log(`${doc.id} => ${doc.data()}`);
 // });
+
+export const fetchPosts = createAsyncThunk('posts/fetchPosts', async (_, thunkAPI) => {
+  try {
+    const querySnapshot = await getDocs(collection(db, 'posts'));
+    const postsData = [];
+    querySnapshot.forEach((doc) => postsData.push(doc.data()));
+    return postsData;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.message);
+  }
+});
 
 // export const addPost = createAsyncThunk('contacts/addContact', async (contact, thunkAPI) => {
 //   try {

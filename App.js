@@ -8,6 +8,8 @@ import { Provider } from 'react-redux';
 import { store } from './src/Redux/store';
 import { RootRoutingPage } from './src/Screens/RootRoutingPage/RootRouting';
 
+import 'react-native-get-random-values';
+
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {

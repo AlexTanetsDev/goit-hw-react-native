@@ -13,15 +13,16 @@ import {
 } from 'react-native';
 import { useState, useEffect } from 'react';
 import * as ImagePicker from 'expo-image-picker';
+import { useAssets } from 'expo-asset';
 import { registrStyles } from './RegaistrationScreen.styles';
 import { useDispatch } from 'react-redux';
 import { register } from '../../Redux/Auth/operations';
 import { AntDesign } from '@expo/vector-icons';
 // test
-// import { ref, uploadBytes } from 'firebase/storage';
-// import { storage } from '../../firebase/config';
 
 export const RegistrationScreen = ({ navigation }) => {
+  const [assets, error] = useAssets([require('../../../assets/images/userDefaultAva.png')]);
+  const [defaultAvatar, setDefaultAvatar] = useState(null);
   const [avatar, setAvatar] = useState(null);
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
@@ -42,6 +43,11 @@ export const RegistrationScreen = ({ navigation }) => {
 
   const dispatch = useDispatch();
   const mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+  useEffect(() => {
+    const DEFAULT_AVA = assets ? assets[0].localUri : null;
+    setDefaultAvatar(DEFAULT_AVA);
+  }, [assets]);
 
   useEffect(() => {
     if (mailformat.test(email)) {
@@ -68,6 +74,15 @@ export const RegistrationScreen = ({ navigation }) => {
     return () => subscription?.remove();
   }, []);
 
+  // const uploadAvatar = async () => {
+  //   const res = await fetch(avatar);
+  //   const file = await res.blob();
+  //   const storRef = ref(storage, `avatars/${uuid()}`);
+  //   await uploadBytes(storRef, file)
+  //     .then(console.log('photo uploaded!!'))
+  //     .catch((e) => console.log('Upload faillllleeeed!!!!', e));
+  // };
+
   const handleEmailImputChange = (value) => {
     setEmail(value);
   };
@@ -86,12 +101,13 @@ export const RegistrationScreen = ({ navigation }) => {
   };
 
   const handleSubmit = () => {
-    if (email === '' || password === '' || login === '' || !isValidEmail) {
+    if (email.trim() === '' || password.trim() === '' || login.trim() === '' || !isValidEmail) {
       alert('Заполните все поля или проверьте правильность ввода!');
       return;
     }
 
-    dispatch(register({ email: email, login: login, password: password, userPhoto: avatar }));
+    const userAvatar = avatar ? avatar : defaultAvatar;
+    dispatch(register({ email, login, password, userPhoto: userAvatar }));
     setEmail('');
     setLogin('');
     setPassword('');
@@ -129,17 +145,6 @@ export const RegistrationScreen = ({ navigation }) => {
       setAvatar(result.assets[0].uri);
     }
   };
-
-  // const tester = async () => {
-  //   const storageRef = ref(storage, 'photos');
-
-  //   const testImg = fetch(avatar);
-  //   const testFile = new File([testImg], 'avatar.jpg');
-
-  //   uploadBytes(storageRef, testFile).then((snapshot) => {
-  //     console.log('Uploaded a blob or file!');
-  //   });
-  // };
 
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
@@ -180,11 +185,6 @@ export const RegistrationScreen = ({ navigation }) => {
               >
                 Регистрация
               </Text>
-              {/* test */}
-              {/* <TouchableOpacity style={{ backgroundColor: 'green', height: 50 }} onPress={tester}>
-                <Text>Send</Text>
-              </TouchableOpacity> */}
-              {/* test */}
               <View style={registrStyles.form}>
                 <View style={{ marginBottom: 16 }}>
                   {!isValidLogin && (
